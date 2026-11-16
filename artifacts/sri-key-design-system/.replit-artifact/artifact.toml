@@ -1,0 +1,19 @@
+kind = "design-system"
+previewPath = "/sri-key-design-system/"
+title = "Sri Key"
+description = "A Sinhala-first, bilingual keyboard design system for fluent Sinhala and English typing, with clear key layouts, smart suggestions, and adaptable themes."
+version = "1.0.0"
+id = "artifacts/sri-key-design-system"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/sri-key-design-system/" ]
+localPort = 22760
+
+[services.development]
+run = "pnpm --filter @workspace/sri-key-design-system run dev"
+
+[services.env]
+PORT = "22760"
+BASE_PATH = "/sri-key-design-system/"
