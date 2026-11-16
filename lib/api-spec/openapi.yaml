@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: keyboard
+    description: Sinhala and English keyboard tools
 paths:
   /healthz:
     get:
@@ -24,6 +26,56 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /keyboard/translate:
+    post:
+      operationId: translateKeyboardText
+      tags: [keyboard]
+      summary: Translate Sinhala and English text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranslateKeyboardTextBody"
+      responses:
+        "200":
+          description: Translation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranslateKeyboardTextResponse"
+        "400":
+          description: Invalid translation request
+        "429":
+          description: Request limit reached
+        "503":
+          description: Translation is not configured
+  /keyboard/transcribe:
+    post:
+      operationId: transcribeKeyboardAudio
+      tags: [keyboard]
+      summary: Transcribe a Sinhala or English voice note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranscribeKeyboardAudioBody"
+      responses:
+        "200":
+          description: Transcription result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranscribeKeyboardAudioResponse"
+        "400":
+          description: Invalid audio request
+        "413":
+          description: Audio file is too large
+        "429":
+          description: Request limit reached
+        "503":
+          description: Voice typing is not configured
 components:
   schemas:
     HealthStatus:
@@ -33,4 +85,44 @@ components:
           type: string
       required:
         - status
+    TranslateKeyboardTextBody:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 5000
+        sourceLanguage:
+          type: string
+          enum: [si, en]
+        targetLanguage:
+          type: string
+          enum: [si, en]
+      required: [text, sourceLanguage, targetLanguage]
+    TranslateKeyboardTextResponse:
+      type: object
+      properties:
+        translation:
+          type: string
+      required: [translation]
+    TranscribeKeyboardAudioBody:
+      type: object
+      properties:
+        audioBase64:
+          type: string
+          minLength: 1
+          maxLength: 11200000
+        audioFormat:
+          type: string
+          enum: [m4a, wav]
+        language:
+          type: string
+          enum: [auto, si, en]
+      required: [audioBase64, audioFormat, language]
+    TranscribeKeyboardAudioResponse:
+      type: object
+      properties:
+        transcription:
+          type: string
+      required: [transcription]
 
